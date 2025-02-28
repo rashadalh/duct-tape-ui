@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { useNewGame } from '../hooks/useNewGame';
+import { useNewGame, useWithdraw } from '../hooks/useNewGame';
+
 import { usePlayerGames } from '../hooks/usePlayerGames';
 import { GameKey } from '../types/game';
 
@@ -23,6 +24,22 @@ const NewGameButton: React.FC = () => {
   )
 }
 
+const WithdrawButton: React.FC = () => {
+  const { createNewWithdraw, isPending, isConfirming } = useWithdraw()
+  return (
+    <button
+      style={{
+        ...styles.newGameButton,
+        opacity: isPending || isConfirming ? 0.5 : 1,
+        cursor: isPending || isConfirming ? 'not-allowed' : 'pointer'
+      }}
+      onClick={createNewWithdraw}
+      disabled={isPending || isConfirming}>
+      {isConfirming ? 'Withdraw In progress...' : 'Withdraw'}
+    </button>
+  )
+}
+
 interface GameControlsProps {
   selectedGameKey?: GameKey
   setSelectedGameKey: (gameKey: GameKey) => void
@@ -33,6 +50,7 @@ const GameControls: React.FC<GameControlsProps> = ({ selectedGameKey, setSelecte
   return (
     <div style={styles.container}>
       <NewGameButton />
+      <WithdrawButton />
       <AvailableGames games={availableGames} />
       <PlayerGames games={playerGames} selectedGameKey={selectedGameKey} setSelectedGameKey={setSelectedGameKey} />
     </div>
@@ -56,7 +74,7 @@ const styles = {
     fontWeight: 'bold',
     cursor: 'pointer',
     marginBottom: '20px',
-  },
+  }
 };
 
 export default GameControls;
